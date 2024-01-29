@@ -44,7 +44,7 @@
       }
     });
 
-    document.querySelector("body").appendChild(modal);
+    document.querySelector(".dashboard").appendChild(modal);
   }
 
   function submitFormularioNuevaTarea() {
@@ -55,9 +55,17 @@
       mostrarAlerta('El Nombre de la tarea es Obligatorio', 'error', document.querySelector('.formulario legend'));
         return
     }
+
+    agregarTarea(tarea)
   }
   // Muestra un mensaje en la interfaz
   function mostrarAlerta(mensaje, tipo, referencia) {
+    // Previene la creacion de multiples alertas
+    const alertaPrevia = document.querySelector('.alerta')
+    if(alertaPrevia) {
+      alertaPrevia.remove()
+    }
+
     const alerta = document.createElement('DIV')
     alerta.classList.add('alerta', tipo)
     alerta.textContent = mensaje
@@ -65,6 +73,30 @@
     // Inserta la alerta antes del legend
     referencia.parentElement.insertBefore(alerta, referencia)
 
+    // Eliminar la alerta despues de 5 segundos
+    setTimeout(() => {
+      alerta.remove()
+    }, 5000);
+  }
 
+  // Consultar el servidor para agregar una nueva tarea
+  async function agregarTarea(tarea) {
+    // Contruir la peticion
+    const datos = new FormData()
+    datos.append('nombre', tarea)
+
+    try {
+      const url = 'http://localhost:3000/api/tarea'
+      const respuesta = await fetch(url, {
+        method: 'POST',
+        body: datos
+      })
+
+      const resultado = await respuesta.json()
+      console.log(resultado)
+
+    } catch (error) {
+      console.log(error)
+    }
   }
 })();
