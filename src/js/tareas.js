@@ -81,22 +81,52 @@
 
   // Consultar el servidor para agregar una nueva tarea
   async function agregarTarea(tarea) {
-    // Contruir la peticion
-    const datos = new FormData()
-    datos.append('nombre', tarea)
+    // Construir la petición
+    const datos = new FormData();
+    datos.append('nombre', tarea);
+    datos.append('proyectoId', obtenerProyecto());
 
     try {
-      const url = 'http://localhost:3000/api/tarea'
-      const respuesta = await fetch(url, {
-        method: 'POST',
-        body: datos
-      })
+        const url = 'http://localhost:3000/api/tarea';
+        const respuesta = await fetch(url, {
+            method: 'POST',
+            body: datos
+        });
+        
+        const resultado = await respuesta.json();
+        
+        mostrarAlerta(
+            resultado.mensaje, 
+            resultado.tipo, 
+            document.querySelector('.formulario legend')
+        );
 
-      const resultado = await respuesta.json()
-      console.log(resultado)
+        if(resultado.tipo === 'exito') {
+            const modal = document.querySelector('.modal');
+            setTimeout(() => {
+                modal.remove();
+            }, 3000);
 
+            // Agregar el objeto de tarea al global de tareas
+            const tareaObj = {
+                id: String(resultado.id),
+                nombre: tarea,
+                estado: "0",
+                proyectoId: resultado.proyectoId
+            }
+
+            tareas = [...tareas, tareaObj];
+            mostrarTareas();
+
+        }
     } catch (error) {
-      console.log(error)
+        console.log(error);
     }
-  }
+}
+
+  function obtenerProyecto() {
+    const proyectoParams = new URLSearchParams(window.location.search);
+    const proyecto = Object.fromEntries(proyectoParams.entries());
+    return proyecto.id;
+}
 })();
