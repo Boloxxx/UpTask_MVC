@@ -3,6 +3,8 @@
 <div class="contenedor-sm">
     <?php include_once __DIR__ . '/../templates/alertas.php';?>
 
+    <a href="/cambiar-password" class="enlace">Cambiar Password</a>
+
     <form method="POST" class="formulario" action="/perfil">
         <div class="campo">
             <label for="nombre">Nombre</label>
@@ -18,4 +20,4 @@
     </form>
 </div>
 
-<?php include_once __DIR__ . '/header-dashboard.php'; ?>
+<?php include_once __DIR__ . '/footer-dashboard.php'; ?>
